@@ -1,6 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
-import { Box, Typography, Paper, CircularProgress, Button } from '@mui/material';
+import { Box, Typography, Paper, CircularProgress, Button, ThemeProvider, createTheme, Container } from '@mui/material';
 import * as ort from 'onnxruntime-web';
+
+// Create a custom theme with light blue colors
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#2196f3',
+      light: '#bbdefb',
+    },
+    background: {
+      default: '#e3f2fd',
+    },
+  },
+});
 
 interface ImageClassifierProps {
   modelPath: string;
@@ -139,47 +152,108 @@ export default function ImageClassifier({ modelPath }: ImageClassifierProps) {
   }, [session]);
 
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto', p: 2 }}>
-      <Paper
-        ref={dropZoneRef}
-        onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()}
+    <ThemeProvider theme={theme}>
+      <Box
         sx={{
-          p: 4,
-          textAlign: 'center',
-          cursor: 'pointer',
-          border: '2px dashed #ccc',
-          '&:hover': { borderColor: 'primary.main' },
+          minHeight: '100vh',
+          backgroundColor: 'background.default',
+          py: 4,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
         }}
       >
-        <Typography variant="h6" gutterBottom>
-          Drop an image here or paste from clipboard
-        </Typography>
-        {loading && <CircularProgress sx={{ my: 2 }} />}
-        {image && (
-          <>
-            <Box sx={{ mt: 2 }}>
-              <img
-                src={image}
-                alt="Uploaded guitar"
-                style={{ maxWidth: '100%', maxHeight: 300, objectFit: 'contain' }}
-              />
+        <Container 
+          maxWidth="md" 
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <Paper
+            elevation={3}
+            sx={{
+              p: 4,
+              width: '100%',
+              maxWidth: 600,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              backgroundColor: 'white',
+              borderRadius: 2,
+            }}
+          >
+            <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'primary.main' }}>
+              Handedness Classifier
+            </Typography>
+            <Box
+              ref={dropZoneRef}
+              onDrop={handleDrop}
+              onDragOver={(e) => e.preventDefault()}
+              sx={{
+                width: '100%',
+                maxWidth: 500,
+                height: 300,
+                border: '2px dashed',
+                borderColor: 'primary.main',
+                borderRadius: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mb: 3,
+                backgroundColor: 'primary.light',
+                opacity: 0.8,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  opacity: 1,
+                  cursor: 'pointer',
+                },
+              }}
+            >
+              {image ? (
+                <img
+                  src={image}
+                  alt="Uploaded"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
+                  }}
+                />
+              ) : (
+                <Typography variant="body1" color="text.secondary">
+                  Drag and drop an image here or paste from clipboard
+                </Typography>
+              )}
             </Box>
-            <Button 
-              variant="contained" 
+            
+            {loading && (
+              <CircularProgress sx={{ my: 2 }} />
+            )}
+            
+            {prediction && (
+              <Typography variant="h5" sx={{ my: 2, color: 'primary.main' }}>
+                Prediction: {prediction}
+              </Typography>
+            )}
+            
+            <Button
+              variant="contained"
               onClick={handleReset}
-              sx={{ mt: 2 }}
+              sx={{
+                mt: 2,
+                backgroundColor: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'primary.dark',
+                },
+              }}
             >
               Reset
             </Button>
-          </>
-        )}
-        {prediction && (
-          <Typography variant="h5" sx={{ mt: 2, fontWeight: 'bold' }}>
-            {prediction}
-          </Typography>
-        )}
-      </Paper>
-    </Box>
+          </Paper>
+        </Container>
+      </Box>
+    </ThemeProvider>
   );
 } 

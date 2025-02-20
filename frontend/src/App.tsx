@@ -13,7 +13,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Container>
-        <Box sx={{ my: 4, textAlign: 'center' }}>
+        <Box sx={{ width: '100vw', my: 4, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', 'justifyContent': 'center' }}>
           <Typography variant="h3" component="h1" gutterBottom>
             Guitar Handedness Detector
           </Typography>
